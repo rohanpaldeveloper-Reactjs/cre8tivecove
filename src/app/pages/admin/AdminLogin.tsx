@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Film, ArrowRight, Lock } from "lucide-react";
 import { setToken, api } from "../../api/client.js";
