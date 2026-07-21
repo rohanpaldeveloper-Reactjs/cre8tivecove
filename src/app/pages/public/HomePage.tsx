@@ -57,6 +57,7 @@ export default function HomePage() {
   const [services, setServices] = useState<any[]>([]);
 
   useEffect(() => {
+    document.title = "Cre8tiveCove | Where Imagination Sets Sail";
     const t = setTimeout(() => setHeroLoaded(true), 100);
     return () => clearTimeout(t);
   }, []);

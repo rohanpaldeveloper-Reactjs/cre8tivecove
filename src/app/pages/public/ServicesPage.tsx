@@ -23,6 +23,7 @@ export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
 
   useEffect(() => {
+    document.title = "Our Services | Cre8tiveCove";
     async function loadData() {
       try {
         const pageData = await api.get("/content/pages/services");

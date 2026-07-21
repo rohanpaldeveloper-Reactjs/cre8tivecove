@@ -17,6 +17,9 @@ export default function WorkDetailPage() {
       try {
         const currentData = await api.get(`/projects/${slug}`);
         setProject(currentData);
+        if (currentData?.title) {
+          document.title = `${currentData.title} | Cre8tiveCove Portfolio`;
+        }
 
         // Fetch all projects to find the "Next Project"
         const allProjects = await api.get("/projects");

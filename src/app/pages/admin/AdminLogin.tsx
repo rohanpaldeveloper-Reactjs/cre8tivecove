@@ -10,6 +10,10 @@ export default function AdminLogin() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    document.title = "Admin Login | Cre8tiveCove";
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");

@@ -18,6 +18,9 @@ export default function ServiceDetailPage() {
       try {
         const data = await api.get(`/services/${slug}`);
         setService(data);
+        if (data?.title) {
+          document.title = `${data.title} | Cre8tiveCove Services`;
+        }
 
         // Fetch related projects
         try {

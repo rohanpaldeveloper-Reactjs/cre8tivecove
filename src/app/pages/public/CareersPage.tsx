@@ -38,6 +38,7 @@ export default function CareersPage() {
   const [departments, setDepartments] = useState<string[]>(["All"]);
 
   useEffect(() => {
+    document.title = "Careers & Opportunities | Cre8tiveCove";
     async function loadData() {
       try {
         const pageData = await api.get("/content/pages/careers");

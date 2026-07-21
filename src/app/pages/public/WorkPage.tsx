@@ -22,6 +22,7 @@ export default function WorkPage() {
   const [quickViewProject, setQuickViewProject] = useState<any | null>(null);
 
   useEffect(() => {
+    document.title = "Portfolio & Work | Cre8tiveCove";
     async function loadProjects() {
       try {
         const allProjects = await api.get("/projects");

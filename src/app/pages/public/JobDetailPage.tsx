@@ -21,6 +21,9 @@ export default function JobDetailPage() {
       try {
         const data = await api.get(`/jobs/${id}`);
         setJob(data);
+        if (data?.title) {
+          document.title = `${data.title} | Cre8tiveCove Careers`;
+        }
       } catch (err) {
         console.error("Failed to load job details:", err);
       } finally {

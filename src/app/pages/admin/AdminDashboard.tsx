@@ -1929,6 +1929,7 @@ function SettingsTab({ settings, refreshData }: any) {
   const [hours, setHours] = useState("");
 
   useEffect(() => {
+    document.title = "CMS Admin Dashboard | Cre8tiveCove";
     if (settings.contact_info) {
       setEmail(settings.contact_info.email || "");
       setPhone(settings.contact_info.phone || "");

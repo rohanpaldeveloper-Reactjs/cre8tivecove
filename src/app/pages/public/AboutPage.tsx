@@ -46,6 +46,7 @@ export default function AboutPage() {
   const [team, setTeam] = useState<any[]>([]);
 
   useEffect(() => {
+    document.title = "About Us | Cre8tiveCove";
     async function loadData() {
       try {
         const pageData = await api.get("/content/pages/about");

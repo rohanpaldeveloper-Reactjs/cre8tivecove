@@ -21,6 +21,7 @@ export default function ContactPage() {
 
   // Check if navigate passed service context
   useEffect(() => {
+    document.title = "Contact Us | Cre8tiveCove";
     if (location.state && (location.state as any).service) {
       setPrefilledService((location.state as any).service);
     }
