@@ -1,0 +1,143 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("SUPER_ADMIN") // SUPER_ADMIN, EDITOR
+  createdAt    DateTime @default(now())
+}
+
+model Page {
+  id       String    @id @default(uuid())
+  slug     String    @unique // "home", "about", "careers", "contact"
+  title    String
+  seoMeta  Json      // { description: string, keywords: string[], ogImage?: string }
+  sections Section[]
+}
+
+model Section {
+  id        String  @id @default(uuid())
+  pageId    String
+  page      Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  key       String  // e.g. "hero", "why_choose_us", "cta"
+  order     Int
+  isVisible Boolean @default(true)
+  content   Json    // { headline: "...", subheading: "...", stats: [...] }
+}
+
+model Service {
+  id               String   @id @default(uuid())
+  title            String
+  slug             String   @unique
+  shortDescription String
+  icon             String
+  order            Int      @default(0)
+  isFeatured       Boolean  @default(false)
+  heroVideoUrl     String?
+  overview         String?
+  process          Json     // [{ title: string, desc: string }]
+  deliverables     Json     // [{ label: string, desc: string }]
+  faqs             Json     // [{ q: string, a: string }]
+}
+
+model Project {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  category        String
+  thumbnailUrl    String
+  previewVideoUrl String?
+  overview        String
+  challenge       String
+  solution        String
+  processSteps    Json     // [{ title: string, desc: string }]
+  results         Json     // [{ stat: string, label: string }]
+  gallery         Json     // string[] (media URLs)
+  clientFeedback  String?
+  clientName      String?
+  clientRole      String?
+  clientAvatar    String?
+  order           Int      @default(0)
+  isFeatured      Boolean  @default(false)
+}
+
+model TeamMember {
+  id       String  @id @default(uuid())
+  name     String
+  role     String
+  photoUrl String
+  bio      String?
+  order    Int     @default(0)
+}
+
+model Testimonial {
+  id          String  @id @default(uuid())
+  clientName  String
+  clientPhoto String?
+  companyLogo String?
+  quote       String
+  rating      Int     @default(5)
+  order       Int     @default(0)
+}
+
+model JobPosting {
+  id               String           @id @default(uuid())
+  title            String
+  department       String
+  location         String
+  type             String           // e.g. "Full-time", "Contract"
+  overview         String
+  responsibilities Json             // string[]
+  requirements     Json             // string[]
+  benefits         Json             // string[]
+  isOpen           Boolean          @default(true)
+  postedAt         DateTime         @default(now())
+  applications     JobApplication[]
+}
+
+model JobApplication {
+  id           String     @id @default(uuid())
+  jobPostingId String
+  jobPosting   JobPosting @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  name         String
+  email        String
+  phone        String?
+  resumeUrl    String
+  coverNote    String?
+  submittedAt  DateTime   @default(now())
+}
+
+model Inquiry {
+  id          String   @id @default(uuid())
+  name        String
+  company     String?
+  service     String
+  budget      String?
+  message     String
+  status      String   @default("NEW") // "NEW", "CONTACTED", "CLOSED"
+  submittedAt DateTime @default(now())
+}
+
+model Media {
+  id          String   @id @default(uuid())
+  url         String
+  filename    String
+  type        String   // "image" or "video"
+  altText     String?
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
+}
+
+model SiteSettings {
+  id    String @id @default(uuid())
+  key   String @unique // e.g. "office_address", "social_links", "achievements_counters"
+  value Json
+}

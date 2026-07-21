@@ -1,0 +1,21 @@
+packages:
+  - '.'
+  - 'server'
+
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@tailwindcss/oxide': true
+  esbuild: true
+  prisma: true
+
+supportedArchitectures:
+  os:
+    - linux
+    - darwin
+  cpu:
+    - x64
+    - arm64
+
+overrides:
+  vite: 6.3.5
