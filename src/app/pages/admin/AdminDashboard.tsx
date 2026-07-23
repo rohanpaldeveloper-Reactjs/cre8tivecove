@@ -739,6 +739,27 @@ function ServicesTab({ services, refreshData }: any) {
   const [overview, setOverview] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const formatText = (tagOpen: string, tagClose: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+    const replacement = tagOpen + selectedText + tagClose;
+
+    const newValue = text.substring(0, start) + replacement + text.substring(end);
+    setShortDescription(newValue);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + tagOpen.length, start + tagOpen.length + selectedText.length);
+    }, 0);
+  };
+
   const resetForm = () => {
     setTitle("");
     setSlug("");
@@ -839,8 +860,60 @@ function ServicesTab({ services, refreshData }: any) {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Short Teaser Description</label>
-              <textarea required rows={2} value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B] resize-none" />
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-white/50">Short Teaser Description</label>
+                <div className="flex items-center gap-1.5 bg-white/[0.03] border border-white/5 px-2 py-1 rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => formatText("<strong>", "</strong>")}
+                    className="px-2 py-0.5 rounded text-[10px] font-bold hover:bg-white/10 text-white/80 cursor-pointer"
+                    title="Bold"
+                  >
+                    B
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => formatText("<em>", "</em>")}
+                    className="px-2 py-0.5 rounded text-[10px] italic hover:bg-white/10 text-white/80 cursor-pointer"
+                    title="Italic"
+                  >
+                    I
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => formatText("<u>", "</u>")}
+                    className="px-2 py-0.5 rounded text-[10px] underline hover:bg-white/10 text-white/80 cursor-pointer"
+                    title="Underline"
+                  >
+                    U
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => formatText("<br />\n", "")}
+                    className="px-2 py-0.5 rounded text-[9px] hover:bg-white/10 text-white/80 cursor-pointer"
+                    title="Line Break"
+                  >
+                    ↵ Break
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShortDescription("")}
+                    className="px-2 py-0.5 rounded text-[9px] hover:bg-red-500/20 text-red-400 cursor-pointer"
+                    title="Clear All"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <textarea
+                ref={textareaRef}
+                required
+                rows={3}
+                value={shortDescription}
+                onChange={(e) => setShortDescription(e.target.value)}
+                placeholder="Write description. Use formatting tools above to apply styles."
+                className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]"
+              />
             </div>
 
             <div className="grid grid-cols-3 gap-4">

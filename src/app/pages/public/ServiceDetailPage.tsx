@@ -107,9 +107,7 @@ export default function ServiceDetailPage() {
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
             <Reveal delay={0.15}>
-              <p className="text-[15px] leading-[1.9] mb-5" style={{ fontFamily: "'Inter', sans-serif", color: "#666" }}>
-                {service.overview || service.shortDescription}
-              </p>
+              <p className="text-[15px] leading-[1.9] mb-5 whitespace-pre-line" style={{ fontFamily: "'Inter', sans-serif", color: "#666" }} dangerouslySetInnerHTML={{ __html: service.overview || service.shortDescription }} />
               <div className="flex flex-wrap gap-3 mt-8">
                 {processList.map((step: any) => (
                   <span key={step.title} className="px-4 py-2 rounded-full text-[12px] font-medium" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#F7F7F7", color: "#666" }}>

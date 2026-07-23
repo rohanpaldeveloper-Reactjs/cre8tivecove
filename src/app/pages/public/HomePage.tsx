@@ -445,7 +445,7 @@ export default function HomePage() {
                       <DynamicIcon name={s.icon} size={18} style={{ color: hoveredService === i ? "#fff" : "#C8A96B" }} />
                     </div>
                     <h3 className="text-base font-bold mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#111" }}>{s.title}</h3>
-                    <p className="text-sm" style={{ fontFamily: "'Inter', sans-serif", color: "#888", lineHeight: 1.6 }}>{s.shortDescription}</p>
+                    <p className="text-sm whitespace-pre-line" style={{ fontFamily: "'Inter', sans-serif", color: "#888", lineHeight: 1.6 }} dangerouslySetInnerHTML={{ __html: s.shortDescription }} />
                     <div
                       className="flex items-center gap-1.5 mt-6 transition-all duration-200"
                       style={{ color: "#C8A96B" }}

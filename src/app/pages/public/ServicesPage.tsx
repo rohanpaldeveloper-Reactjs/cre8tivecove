@@ -129,9 +129,7 @@ export default function ServicesPage() {
                     <h2 className="font-bold text-xl mb-2 text-[#111] group-hover:text-[#C8A96B] transition-colors" style={{ fontFamily: "'Playfair Display', serif" }}>
                       {s.title}
                     </h2>
-                    <p className="text-[13px] leading-relaxed text-gray-600 mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                      {s.shortDescription}
-                    </p>
+                    <p className="text-[13px] leading-relaxed text-gray-600 mb-3 whitespace-pre-line" style={{ fontFamily: "'Inter', sans-serif" }} dangerouslySetInnerHTML={{ __html: s.shortDescription }} />
 
                     {/* Deliverable pills */}
                     {deliverables.length > 0 && (
