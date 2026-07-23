@@ -110,7 +110,7 @@ export default function ContactPage() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <MapPin size={24} style={{ color: "#C8A96B", margin: "0 auto 6px" }} />
-                    <span className="text-[11px] font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#fff" }}>Sunset Blvd, LA</span>
+                    <span className="text-[11px] font-semibold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#fff" }}>Indirapuram, Ghaziabad, Uttar Pradesh 201014</span>
                   </div>
                 </div>
               </div>
