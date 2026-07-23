@@ -55,7 +55,7 @@ export default function AdminLogin() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@cre8tivecove.com"
+              placeholder="Enter you email"
               className="w-full px-4 py-3.5 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B] transition-colors placeholder-white/20"
               style={{ fontFamily: "'Inter', sans-serif" }}
             />
