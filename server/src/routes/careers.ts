@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import prisma from "../db.js";
 import { authenticateToken, AuthenticatedRequest } from "../middleware/auth.js";
+import { emailService } from "../services/email.js";
 
 const router = Router();
 
@@ -101,6 +102,12 @@ router.post("/jobs/:id/apply", upload.single("resume"), async (req, res) => {
     });
 
     console.log(`[HR Alert] New job application received for role '${job.title}' from ${name} (${email})`);
+
+    // Send email alert to hello@cre8tivecove.com asynchronously with the resume attachment
+    const absoluteResumePath = req.file ? path.resolve(req.file.path) : null;
+    emailService.sendJobApplicationEmail(application, job.title, absoluteResumePath).catch((err) => {
+      console.error("[Email Service Alert Error] Failed to send job application email:", err);
+    });
 
     return res.status(201).json(application);
   } catch (error) {

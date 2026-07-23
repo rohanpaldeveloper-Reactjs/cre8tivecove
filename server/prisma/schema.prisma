@@ -55,6 +55,7 @@ model Project {
   category        String
   thumbnailUrl    String
   previewVideoUrl String?
+  youtubeUrl      String?
   overview        String
   challenge       String
   solution        String

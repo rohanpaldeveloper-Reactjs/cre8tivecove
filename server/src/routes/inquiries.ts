@@ -1,6 +1,7 @@
 import { Router, Response } from "express";
 import prisma from "../db.js";
 import { authenticateToken, AuthenticatedRequest } from "../middleware/auth.js";
+import { emailService } from "../services/email.js";
 
 const router = Router();
 
@@ -24,6 +25,11 @@ router.post("/", async (req, res) => {
     });
 
     console.log(`[Sales Alert] New client inquiry received from ${name} for ${service}. Budget: ${budget || "Not Specified"}`);
+
+    // Send email alert to hello@cre8tivecove.com asynchronously (non-blocking)
+    emailService.sendInquiryEmail(inquiry).catch((err) => {
+      console.error("[Email Service Alert Error] Failed to send client inquiry email:", err);
+    });
 
     return res.status(201).json(inquiry);
   } catch (error) {

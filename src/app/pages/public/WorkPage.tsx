@@ -12,6 +12,14 @@ const CATEGORY_ICONS: Record<string, any> = {
   "Corporate AV & Testimonials": Video,
 };
 
+function getYouTubeEmbedUrl(url: string) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  const videoId = (match && match[2].length === 11) ? match[2] : null;
+  return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : null;
+}
+
 export default function WorkPage() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("All");
@@ -84,7 +92,7 @@ export default function WorkPage() {
             </div>
 
             {/* Behance Direct Banner Badge */}
-            <a
+            {/* <a
               href="https://www.behance.net/ashishnwh29"
               target="_blank"
               rel="noopener noreferrer"
@@ -99,7 +107,7 @@ export default function WorkPage() {
                   Ashish Mishrra on Behance <ExternalLink size={13} />
                 </p>
               </div>
-            </a>
+            </a> */}
           </div>
         </Reveal>
 
@@ -323,30 +331,54 @@ export default function WorkPage() {
               <X size={18} />
             </button>
 
-            {/* Modal Image */}
-            <div className="relative h-64 bg-gray-900 shrink-0">
-              <img
-                src={
-                  quickViewProject.thumbnailUrl.startsWith("http")
-                    ? quickViewProject.thumbnailUrl
-                    : `https://images.unsplash.com/photo-${quickViewProject.thumbnailUrl}?w=1200&h=600&fit=crop&auto=format`
-                }
-                alt={quickViewProject.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-[#C8A96B] text-white mb-2 inline-block">
-                  {quickViewProject.category}
-                </span>
-                <h3 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  {quickViewProject.title}
-                </h3>
-              </div>
+            {/* Modal Image / Video Player */}
+            <div className="relative aspect-video bg-gray-900 shrink-0">
+              {getYouTubeEmbedUrl(quickViewProject.youtubeUrl) ? (
+                <iframe
+                  src={getYouTubeEmbedUrl(quickViewProject.youtubeUrl)}
+                  title={quickViewProject.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              ) : (
+                <>
+                  <img
+                    src={
+                      quickViewProject.thumbnailUrl.startsWith("http")
+                        ? quickViewProject.thumbnailUrl
+                        : `https://images.unsplash.com/photo-${quickViewProject.thumbnailUrl}?w=1200&h=600&fit=crop&auto=format`
+                    }
+                    alt={quickViewProject.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-6 left-6 right-6 text-white">
+                    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-[#C8A96B] text-white mb-2 inline-block">
+                      {quickViewProject.category}
+                    </span>
+                    <h3 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                      {quickViewProject.title}
+                    </h3>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Modal Content */}
             <div className="p-6 overflow-y-auto space-y-6">
+              {getYouTubeEmbedUrl(quickViewProject.youtubeUrl) && (
+                <div className="border-b border-gray-100 pb-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-[#C8A96B] text-white mb-2 inline-block">
+                    {quickViewProject.category}
+                  </span>
+                  <h3 className="text-2xl font-bold text-gray-900 mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {quickViewProject.title}
+                  </h3>
+                </div>
+              )}
+
               <div>
                 <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">Overview</h4>
                 <p className="text-sm text-gray-700 leading-relaxed">{quickViewProject.overview}</p>

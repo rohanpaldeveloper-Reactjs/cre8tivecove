@@ -59,7 +59,7 @@ export function Nav() {
                 style={({ isActive }) => ({
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontWeight: isActive ? 600 : 500,
-                  color: isActive ? "#C8A96B" : "#444",
+                  color: isActive ? "#8F6E2F" : "#444",
                   background: isActive ? "rgba(200,169,107,0.08)" : "transparent",
                 })}
               >
@@ -104,7 +104,7 @@ export function Nav() {
               className="text-left py-4 text-2xl font-semibold border-b border-gray-100 transition-colors"
               style={({ isActive }) => ({
                 fontFamily: "'Playfair Display', serif",
-                color: isActive ? "#C8A96B" : "#111",
+                color: isActive ? "#8F6E2F" : "#111",
                 fontStyle: isActive ? "italic" : "normal",
               })}
             >

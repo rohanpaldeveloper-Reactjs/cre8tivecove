@@ -155,7 +155,7 @@ export default function ContactPage() {
                       ))}
                     </select>
                   </div>
-                  <div>
+                  {/* <div>
                     <label className="text-[10px] font-bold uppercase tracking-[0.12em] block mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#bbb" }}>Budget Range</label>
                     <select name="budget" className="w-full px-5 py-4 rounded-xl text-[13px] border border-gray-200 bg-[#FAFAFA] outline-none focus:border-[#C8A96B] transition-colors" style={{ fontFamily: "'Inter', sans-serif", color: "#555" }}>
                       <option value="">Select a range</option>
@@ -163,7 +163,7 @@ export default function ContactPage() {
                         <option key={b} value={b}>{b}</option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
                   <div>
                     <label className="text-[10px] font-bold uppercase tracking-[0.12em] block mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#bbb" }}>Project Details</label>
                     <textarea

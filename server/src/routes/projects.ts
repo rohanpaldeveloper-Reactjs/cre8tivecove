@@ -39,7 +39,7 @@ router.get("/:slug", async (req, res) => {
 // POST / [Admin Protected]
 router.post("/", authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   const {
-    title, slug, category, thumbnailUrl, previewVideoUrl,
+    title, slug, category, thumbnailUrl, previewVideoUrl, youtubeUrl,
     overview, challenge, solution, processSteps, results,
     gallery, clientFeedback, clientName, clientRole, clientAvatar,
     order, isFeatured
@@ -64,6 +64,7 @@ router.post("/", authenticateToken, async (req: AuthenticatedRequest, res: Respo
         category,
         thumbnailUrl,
         previewVideoUrl: previewVideoUrl || null,
+        youtubeUrl: youtubeUrl || null,
         overview,
         challenge: challenge || "",
         solution: solution || "",
@@ -90,7 +91,7 @@ router.post("/", authenticateToken, async (req: AuthenticatedRequest, res: Respo
 router.put("/:id", authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const {
-    title, slug, category, thumbnailUrl, previewVideoUrl,
+    title, slug, category, thumbnailUrl, previewVideoUrl, youtubeUrl,
     overview, challenge, solution, processSteps, results,
     gallery, clientFeedback, clientName, clientRole, clientAvatar,
     order, isFeatured
@@ -118,6 +119,7 @@ router.put("/:id", authenticateToken, async (req: AuthenticatedRequest, res: Res
         category: category !== undefined ? category : existing.category,
         thumbnailUrl: thumbnailUrl !== undefined ? thumbnailUrl : existing.thumbnailUrl,
         previewVideoUrl: previewVideoUrl !== undefined ? previewVideoUrl : existing.previewVideoUrl,
+        youtubeUrl: youtubeUrl !== undefined ? youtubeUrl : existing.youtubeUrl,
         overview: overview !== undefined ? overview : existing.overview,
         challenge: challenge !== undefined ? challenge : existing.challenge,
         solution: solution !== undefined ? solution : existing.solution,

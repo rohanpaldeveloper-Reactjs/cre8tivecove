@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import {
   LayoutDashboard, Home, Info, Film, Briefcase, Users, MessageSquare,
   FileText, Mail, Image, Settings, LogOut, Plus, Trash2, Check,
-  ExternalLink, Upload, Copy, Eye, Clock, DollarSign, Archive
+  ExternalLink, Upload, Copy, Eye, Clock, DollarSign, Archive, Star
 } from "lucide-react";
 import { getToken, logout, api } from "../../api/client.js";
 
@@ -735,6 +735,7 @@ function ServicesTab({ services, refreshData }: any) {
   const [order, setOrder] = useState("0");
   const [isFeatured, setIsFeatured] = useState(false);
   const [heroVideoUrl, setHeroVideoUrl] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [overview, setOverview] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -862,8 +863,53 @@ function ServicesTab({ services, refreshData }: any) {
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Hero Cover Image/Video URL</label>
-              <input type="text" value={heroVideoUrl} onChange={(e) => setHeroVideoUrl(e.target.value)} placeholder="Paste URL from Media Library" className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
+              <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Hero Cover Image/Video</label>
+              {heroVideoUrl && (
+                <div className="mb-2 relative group w-32 h-18 rounded-lg overflow-hidden border border-white/10">
+                  {heroVideoUrl.match(/\.(mp4|mov|webm)/i) || heroVideoUrl.includes("video") ? (
+                    <video src={heroVideoUrl} className="w-full h-full object-cover" muted playsInline />
+                  ) : (
+                    <img src={heroVideoUrl} alt="Hero Preview" className="w-full h-full object-cover" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setHeroVideoUrl("")}
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 font-semibold text-[9px] transition-opacity"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={async (e) => {
+                    if (!e.target.files || e.target.files.length === 0) return;
+                    const file = e.target.files[0];
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    setUploadingImage(true);
+                    try {
+                      const res = await api.post("/media", formData);
+                      setHeroVideoUrl(`http://localhost:5001${res.url}`);
+                    } catch (err: any) {
+                      alert(err.message || "Failed to upload file");
+                    } finally {
+                      setUploadingImage(false);
+                    }
+                  }}
+                  className="hidden"
+                  id="heroCoverUploadInput"
+                />
+                <label
+                  htmlFor="heroCoverUploadInput"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-[13px] font-semibold text-white/80 cursor-pointer hover:bg-white/[0.05] transition-colors"
+                >
+                  <Upload size={14} />
+                  {uploadingImage ? "Uploading..." : heroVideoUrl ? "Change File" : "Upload File"}
+                </label>
+              </div>
             </div>
 
             <div>
@@ -937,7 +983,9 @@ function ProjectsTab({ projects, refreshData }: any) {
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState("TVC & Commercials");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [previewVideoUrl, setPreviewVideoUrl] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [overview, setOverview] = useState("");
   const [challenge, setChallenge] = useState("");
   const [solution, setSolution] = useState("");
@@ -955,6 +1003,7 @@ function ProjectsTab({ projects, refreshData }: any) {
     setCategory("TVC & Commercials");
     setThumbnailUrl("");
     setPreviewVideoUrl("");
+    setYoutubeUrl("");
     setOverview("");
     setChallenge("");
     setSolution("");
@@ -975,6 +1024,7 @@ function ProjectsTab({ projects, refreshData }: any) {
     setCategory(prj.category);
     setThumbnailUrl(prj.thumbnailUrl);
     setPreviewVideoUrl(prj.previewVideoUrl || "");
+    setYoutubeUrl(prj.youtubeUrl || "");
     setOverview(prj.overview);
     setChallenge(prj.challenge || "");
     setSolution(prj.solution || "");
@@ -1001,8 +1051,13 @@ function ProjectsTab({ projects, refreshData }: any) {
     e.preventDefault();
     setErrorMsg("");
 
+    if (!thumbnailUrl) {
+      setErrorMsg("Thumbnail image is required. Please upload an image file.");
+      return;
+    }
+
     const payload = {
-      title, slug, category, thumbnailUrl, previewVideoUrl,
+      title, slug, category, thumbnailUrl, previewVideoUrl, youtubeUrl,
       overview, challenge, solution, clientFeedback,
       clientName, clientRole, clientAvatar,
       order: parseInt(order) || 0,
@@ -1081,14 +1136,59 @@ function ProjectsTab({ projects, refreshData }: any) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Thumbnail Image URL</label>
-                <input required type="text" value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)} placeholder="Paste URL from Media Library" className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-col justify-end">
+                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Thumbnail Image</label>
+                {thumbnailUrl && (
+                  <div className="mb-2 relative group w-24 h-14 rounded-lg overflow-hidden border border-white/10">
+                    <img src={thumbnailUrl} alt="Thumbnail Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setThumbnailUrl("")}
+                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 font-semibold text-[9px] transition-opacity"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      if (!e.target.files || e.target.files.length === 0) return;
+                      const file = e.target.files[0];
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      setUploadingImage(true);
+                      try {
+                        const res = await api.post("/media", formData);
+                        setThumbnailUrl(`http://localhost:5001${res.url}`);
+                      } catch (err: any) {
+                        alert(err.message || "Failed to upload image");
+                      } finally {
+                        setUploadingImage(false);
+                      }
+                    }}
+                    className="hidden"
+                    id="thumbnailUploadInput"
+                  />
+                  <label
+                    htmlFor="thumbnailUploadInput"
+                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-[13px] font-semibold text-white/80 cursor-pointer hover:bg-white/[0.05] transition-colors"
+                  >
+                    <Upload size={14} />
+                    {uploadingImage ? "Uploading..." : thumbnailUrl ? "Change Image" : "Upload File"}
+                  </label>
+                </div>
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Hover Preview Video URL</label>
                 <input type="text" value={previewVideoUrl} onChange={(e) => setPreviewVideoUrl(e.target.value)} placeholder="e.g. /uploads/media/video.mp4" className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">YouTube Video URL</label>
+                <input type="text" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="e.g. https://www.youtube.com/..." className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
               </div>
             </div>
 
@@ -1198,6 +1298,7 @@ function TeamTab({ team, refreshData }: any) {
   const [bio, setBio] = useState("");
   const [order, setOrder] = useState("0");
   const [errorMsg, setErrorMsg] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const reset = () => {
     setName("");
@@ -1231,6 +1332,13 @@ function TeamTab({ team, refreshData }: any) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
+
+    if (!photoUrl) {
+      setErrorMsg("Photo image is required. Please upload an image file.");
+      return;
+    }
+
     const payload = { name, role, photoUrl, bio, order: parseInt(order) || 0 };
     try {
       if (editingId) {
@@ -1276,9 +1384,50 @@ function TeamTab({ team, refreshData }: any) {
               <input required type="text" value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Photo Image URL</label>
-                <input required type="text" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="Paste URL from Media Library" className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
+              <div className="flex flex-col justify-end">
+                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Photo Image</label>
+                {photoUrl && (
+                  <div className="mb-2 relative group w-20 h-20 rounded-xl overflow-hidden border border-white/10">
+                    <img src={photoUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setPhotoUrl("")}
+                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 font-semibold text-[9px] transition-opacity"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      if (!e.target.files || e.target.files.length === 0) return;
+                      const file = e.target.files[0];
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      setUploadingImage(true);
+                      try {
+                        const res = await api.post("/media", formData);
+                        setPhotoUrl(`http://localhost:5001${res.url}`);
+                      } catch (err: any) {
+                        alert(err.message || "Failed to upload photo");
+                      } finally {
+                        setUploadingImage(false);
+                      }
+                    }}
+                    className="hidden"
+                    id="teamPhotoUploadInput"
+                  />
+                  <label
+                    htmlFor="teamPhotoUploadInput"
+                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-[13px] font-semibold text-white/80 cursor-pointer hover:bg-white/[0.05] transition-colors"
+                  >
+                    <Upload size={14} />
+                    {uploadingImage ? "Uploading..." : photoUrl ? "Change Photo" : "Upload Photo"}
+                  </label>
+                </div>
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Sort Order</label>
@@ -1337,6 +1486,7 @@ function TestimonialsTab({ testimonials, refreshData }: any) {
   const [rating, setRating] = useState("5");
   const [order, setOrder] = useState("0");
   const [errorMsg, setErrorMsg] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const reset = () => {
     setClientName("");
@@ -1411,9 +1561,50 @@ function TestimonialsTab({ testimonials, refreshData }: any) {
               <input required type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="e.g. Marcus Chen, CMO Horizon Group" className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Client Avatar Image URL</label>
-                <input type="text" value={clientPhoto} onChange={(e) => setClientPhoto(e.target.value)} placeholder="Paste URL from Media Library" className="w-full px-4 py-3 rounded-xl text-[13px] border border-white/10 bg-white/[0.02] text-white outline-none focus:border-[#C8A96B]" />
+              <div className="flex flex-col justify-end">
+                <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Client Avatar Image</label>
+                {clientPhoto && (
+                  <div className="mb-2 relative group w-14 h-14 rounded-full overflow-hidden border border-white/10">
+                    <img src={clientPhoto} alt="Avatar Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setClientPhoto("")}
+                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 font-semibold text-[9px] transition-opacity"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      if (!e.target.files || e.target.files.length === 0) return;
+                      const file = e.target.files[0];
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      setUploadingImage(true);
+                      try {
+                        const res = await api.post("/media", formData);
+                        setClientPhoto(`http://localhost:5001${res.url}`);
+                      } catch (err: any) {
+                        alert(err.message || "Failed to upload avatar");
+                      } finally {
+                        setUploadingImage(false);
+                      }
+                    }}
+                    className="hidden"
+                    id="clientAvatarUploadInput"
+                  />
+                  <label
+                    htmlFor="clientAvatarUploadInput"
+                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-[13px] font-semibold text-white/80 cursor-pointer hover:bg-white/[0.05] transition-colors"
+                  >
+                    <Upload size={14} />
+                    {uploadingImage ? "Uploading..." : clientPhoto ? "Change Avatar" : "Upload Avatar"}
+                  </label>
+                </div>
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider block mb-2 text-white/50">Rating (1 to 5 Stars)</label>
@@ -1442,7 +1633,7 @@ function TestimonialsTab({ testimonials, refreshData }: any) {
             <div key={t.id} className="bg-[#111] rounded-2xl border border-white/5 p-6 flex flex-col justify-between group">
               <div>
                 <div className="flex gap-0.5 mb-4">
-                  {[...Array(t.rating)].map((_, j) => <Star key={j} size={11} fill="#C8A96B" style={{ color: "#C8A96B" }} />)}
+                  {[...Array(Number(t.rating) || 5)].map((_, j) => <Star key={j} size={11} fill="#C8A96B" style={{ color: "#C8A96B" }} />)}
                 </div>
                 <blockquote className="text-xs text-white/70 italic leading-relaxed">&ldquo;{t.quote}&rdquo;</blockquote>
               </div>
